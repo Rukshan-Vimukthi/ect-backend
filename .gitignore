@@ -1,0 +1,12 @@
+.idea
+.apigenignore
+db.sqlite3
+
+*/__pycache__
+*/__pycache__/*.pyc
+*/migrations/
+
+*/settings.py
+
+media
+static
