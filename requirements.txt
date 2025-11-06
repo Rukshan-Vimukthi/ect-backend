@@ -29,3 +29,4 @@ typing-extensions==4.13.2
 uritemplate==4.1.1
 urllib3==1.26.20
 us==3.2.0
+uvicorn==0.35.0
