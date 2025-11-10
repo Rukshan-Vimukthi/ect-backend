@@ -38,5 +38,8 @@ urlpatterns = [
 	path("currency/get", get_currency),
 	path("currency/update", update_currency),
 	path("currency/delete", delete_currency),
-    path("tourtype/get", get_tour_types)
+    path("tourtype/get", get_tour_types),
+
+	path("review/post", post_review),
+	path("review/get", get_review),
 ]

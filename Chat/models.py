@@ -17,3 +17,13 @@ class Message(models.Model):
     message = models.TextField(null=True, blank=True)
     datetime = models.DateTimeField(null=True, blank=True)
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
+
+
+class ExternalContact(models.Model):
+    id = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20)
+    email = models.EmailField()
+    phone = models.CharField(max_length=13)
+    subject = models.CharField(max_length=50)
+    message = models.TextField()

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class TourType(models.Model):
@@ -56,4 +57,10 @@ class Accommodation(models.Model):
 class Currency(models.Model):
     id = models.AutoField(primary_key=True)
     currency = models.CharField(max_length=5)
+
+
+class Review(models.Model):
+    id = models.AutoField(primary_key=True)
+    content = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 

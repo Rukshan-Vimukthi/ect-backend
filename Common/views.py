@@ -14,6 +14,7 @@ from .models import RoomType
 from .models import MealPlan
 from .models import Accommodation
 from .models import Currency
+from .models import Review
 
 
 # Create your views here.
@@ -798,5 +799,42 @@ def get_tour_types(request):
 	response["status"] = "ok"
 
 
+	return Response(response)
+
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def post_review(request):
+	response = {"status": "failed"}
+	try:
+		reviewData = request.data
+		review = Review.objects.create(
+			user=request.user,
+			content=reviewData["content"]
+		)
+		if review is not None:
+			response["status"] = "ok"
+	except:
+		pass
+	return Response(response)
+
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_review(request):
+	response = {"status": "failed"}
+	reviews = Review.objects.all()
+	reviewData = []
+	for review in reviews:
+		reviewData.append(
+			{
+				"username": review.user.username,
+				"content": review.content
+			}
+		)
+
+	response["reviews"] = reviewData
 	return Response(response)
 

@@ -17,6 +17,8 @@ from channels.layers import get_channel_layer
 
 from ApplicationUser.authentication import OptionalJWTAuthentication
 
+from .models import ExternalContact
+
 
 # Create your views here.
 
@@ -583,5 +585,28 @@ def accept_request(request):
 		contact.accepted = True
 		contact.save()
 		response["status"] = "ok"
+	return Response(response)
+
+
+@api_view(["POST"])
+@authentication_classes([])
+@permission_classes([])
+def send_external_message(request):
+	response = {"status": "failed"}
+	try:
+		data = request.data
+		externalMessage = ExternalContact.objects.create(
+			first_name=data["first_name"],
+			last_name=data["last_name"],
+			email=data["email"],
+			phone=data["phone"],
+			subject=data["subject"],
+			message=data["message"]
+		)
+		if externalMessage is not None:
+			response["status"] = "ok"
+	except:
+		pass
+	
 	return Response(response)
 
