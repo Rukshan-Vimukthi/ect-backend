@@ -133,10 +133,12 @@ def create_place(request):
 				source = data["source"]
 				place.source = source
 				place.save()
-			except:
+			except Exception as exception:
+				print(exception)
 				pass
 			response["status"] = "ok"
-	except:
+	except Exception as e:
+		print(e)
 		pass
 	# images = data["images"]
 
