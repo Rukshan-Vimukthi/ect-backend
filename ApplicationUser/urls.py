@@ -5,6 +5,7 @@ urlpatterns = [
     path("signup", signup),
     path("sign_in", sign_in),
     path("admin/signin", admin_sign_in),
+   	path("token/refresh", refresh_token),
 	path("tourinquiry/create", create_tourinquiry),
 	path("tourinquiries/get", get_tourinquiries),
 	path("tourinquiry/get", get_tourinquiry),

@@ -15,4 +15,5 @@ urlpatterns = [
     path("list", get_contact_list),
     path("init", init_chat),
     path("message/external/send", send_external_message),
+    path("message/external/get", get_external_message),
 ]

@@ -19,6 +19,10 @@ from ApplicationUser.authentication import OptionalJWTAuthentication
 
 from .models import ExternalContact
 
+from .serializers import ExternalContactSerializer
+
+from BininsNotification.utils import notifyAdmin
+
 
 # Create your views here.
 
@@ -604,8 +608,27 @@ def send_external_message(request):
 			message=data["message"]
 		)
 		if externalMessage is not None:
+			notifyAdmin("Message Received!", "New message received from the contact form", data)
 			response["status"] = "ok"
 	except:
+		pass
+	
+	return Response(response)
+
+
+@api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_external_message(request):
+	response = {"status": "failed"}
+	try:
+
+		externalMessages = ExternalContact.objects.all()
+		serializer = ExternalContactSerializer(externalMessages, many=True)
+		response["data"] = serializer.data
+		response["status"] = "ok"
+	except Exception as e:
+		print(e)
 		pass
 	
 	return Response(response)

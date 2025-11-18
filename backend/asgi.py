@@ -18,6 +18,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 
 from ApplicationUser.middleware import JWTAuthMiddleware
 import Chat.routing
+import BininsNotification.routing
 
 
 application = ProtocolTypeRouter({
@@ -25,7 +26,7 @@ application = ProtocolTypeRouter({
     "websocket": SessionMiddlewareStack(
         JWTAuthMiddleware(
             URLRouter(
-                Chat.routing.websocket_urlpatterns
+                Chat.routing.websocket_urlpatterns + BininsNotification.routing.websocket_url_patterns
             )
         )
     )

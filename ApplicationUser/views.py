@@ -23,6 +23,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
 
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -31,6 +32,8 @@ from .models import *
 
 import json
 from django.conf import settings
+
+from BininsNotification.utils import notifyAdmin
 
 # Create your views here.
 
@@ -52,6 +55,7 @@ def signup(request):
 
         if password == password_confirmation:
             user = User.objects.create(
+				username=first_name + ' ' + last_name,
                 first_name=first_name, last_name=last_name, email=email, password=make_password(password))
             if user is not None:
                 tourist = Tourist.objects.create(phone=phone, user=user)
@@ -103,11 +107,12 @@ def admin_sign_in(request):
 		username = data["username"]
 		password = data["password"]
 		user = User.objects.get(username=username)
+		
 		if user.check_password(password):
 			if user.is_superuser:
 				refresh_token = RefreshToken.for_user(user)
 				access_token = str(refresh_token.access_token)
-				response["access"] = access_token
+				response["access"] = str(access_token)
 				response["refresh"] = str(refresh_token)
 				response["status"] = "ok"
 			else:
@@ -121,11 +126,37 @@ def admin_sign_in(request):
 
 
 @api_view(["POST"])
+def refresh_token(request):
+	response = {"status": "failed"}
+	print(request.data)
+	try:
+		data = request.data
+		refreshTokenStr = data["refresh"]
+		oldRefreshToken = RefreshToken(refreshTokenStr)
+		outstanding = OutstandingToken.objects.get(jti=oldRefreshToken["jti"])
+		BlacklistedToken.objects.get_or_create(token=outstanding)
+		user_id = oldRefreshToken["user_id"]
+		print(user_id)
+		user = User.objects.get(id=user_id)
+		print(user)
+
+		newRefreshToken = RefreshToken.for_user(user)
+		response["refresh"] = str(newRefreshToken)
+		response["access"] = str(newRefreshToken.access_token)
+		response["status"] = "ok"
+	except Exception as e:
+		print(e)
+		pass
+
+	print(response)
+	return Response(response)
+
+
+@api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def create_tourinquiry(request):
 	response = {"status": "failed", "message": ""}
-
 
 	data = request.data
 	print(data)
@@ -212,7 +243,7 @@ def create_tourinquiry(request):
 			# 		placesObjects.append(place)
 				except Exception as e:
 					print(e)
-
+			notifyAdmin("New Inquiry", "New inquiry has been made. please check it out!", data)
 			response["status"] = "ok"
 	except Exception as e:
 		print(e)
