@@ -28,7 +28,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 contacts = await sync_to_async(getContactList)(user, email)
                 print(contacts)
                 await self.send(text_data=json.dumps({"contacts": contacts}))
-            await self.close()
+            else:
+                await self.close()
         except Exception as e:
             print(e)
             # print("Error occurred!")
