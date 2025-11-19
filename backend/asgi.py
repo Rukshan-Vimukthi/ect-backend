@@ -26,7 +26,7 @@ application = ProtocolTypeRouter({
     "websocket": SessionMiddlewareStack(
         JWTAuthMiddleware(
             URLRouter(
-                Chat.routing.websocket_urlpatterns + BininsNotification.routing.websocket_url_patterns
+                Chat.routing.websocket_urlpatterns + BininsNotification.routing.websocket_urlpatterns
             )
         )
     )
