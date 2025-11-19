@@ -24,7 +24,7 @@ class PlaceImageSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         imageURL = None
         if instance.image:
-            imageURL = settings.DOMAIN + instance.image.url
+            imageURL = instance.image.url
 
         return {
             "id": data["id"],
