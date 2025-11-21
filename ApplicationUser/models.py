@@ -31,10 +31,12 @@ class TourInquiry(models.Model):
     transport_type = models.ManyToManyField(to=TransportType, through="TourInquiryHasTransportType")
     age_categories = models.ManyToManyField(to=AgeCategory, through="TourInquiryHasAgeCategory")
     places = models.ManyToManyField(to=Place, through="TourInquiryHasPlace")
+    placesString = models.TextField(null=True, blank=True)
     estimated_budget = models.FloatField(default=0.0)
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE, null=True)
     hotels = models.ManyToManyField(to=Hotel, through="TourInquiryHasHotels")
     roomType = models.ForeignKey(RoomType, on_delete=models.CASCADE, null=True)
+    extraNotes = models.TextField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
 

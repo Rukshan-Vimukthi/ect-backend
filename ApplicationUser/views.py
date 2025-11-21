@@ -175,6 +175,7 @@ def create_tourinquiry(request):
 		guideLanguage = data["guideLanguage"]
 		estimatedBudget = data["estimatedBudget"]
 		currency = data["currency"]
+		extraNotes = data["extraNotes"]
 		needVisaAssistance = True if data["needVisaAssistance"][0] == 'true' else False
 		needTravelInsurance = True if data["needTravelInsurance"] == 'true' else False
 
@@ -202,7 +203,9 @@ def create_tourinquiry(request):
 			estimated_budget=estimatedBudget,
 			currency=currency,
 			need_visa_assistance=needVisaAssistance,
-			need_travel_insurance=needTravelInsurance
+			need_travel_insurance=needTravelInsurance,
+			user=request.user,
+			extraNotes=extraNotes
 		)
 
 		if tourInquiry is not None:
@@ -212,7 +215,7 @@ def create_tourinquiry(request):
 					transportTypeObject = TransportType.objects.get(id=transportType)
 					print(transportTypeObject)
 					tourInquiryHasTransportType = TourInquiryHasTransportType.objects.create(
-						transport_type=transportType,
+						transport_type=transportTypeObject,
 						tour_inquiry=tourInquiry
 					)
 			# 		placesObjects.append(place)
@@ -232,17 +235,26 @@ def create_tourinquiry(request):
 			print(places)
 			print(places[0])
 
-			for placeID in places:
-				try:
-					place = Place.objects.get(id=placeID)
-					print(place)
-					tourInquiryHasPlace = TourInquiryHasPlace.objects.create(
-						place=place,
-						tour_inquiry=tourInquiry
-					)
-			# 		placesObjects.append(place)
-				except Exception as e:
-					print(e)
+			placesString = ""
+			for place in places:
+				placesString += place
+				placesString += "###"
+
+			placesString = placesString.removesuffix("###")
+			tourInquiry.placesString = placesString
+			tourInquiry.save()
+
+			# for placeID in places:
+			# 	try:
+			# 		place = Place.objects.get(id=placeID)
+			# 		print(place)
+			# 		tourInquiryHasPlace = TourInquiryHasPlace.objects.create(
+			# 			place=place,
+			# 			tour_inquiry=tourInquiry
+			# 		)
+			# # 		placesObjects.append(place)
+			# 	except Exception as e:
+			# 		print(e)
 			notifyAdmin("New Inquiry", "New inquiry has been made. please check it out!", data)
 			response["status"] = "ok"
 	except Exception as e:
